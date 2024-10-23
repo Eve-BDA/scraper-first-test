@@ -18,6 +18,33 @@ const getQuotes = async () => {
   await page.goto("http://quotes.toscrape.com/", {
     waitUntil: "domcontentloaded",
   });
+
+// Get page data
+const quotes = await page.evaluate(() => {
+  // Fetch the first element with class "quote"
+  // Get the displayed text and returns it
+  const quoteList = document.querySelectorAll(".quote");
+
+  // Convert the quoteList to an iterable array
+  // For each quote fetch the text and author
+  return Array.from(quoteList).map((quote) => {
+    // Fetch the sub-elements from the previously fetched quote element
+    // Get the displayed text and return it (`.innerText`)
+    const text = quote.querySelector(".text").innerText;
+    const author = quote.querySelector(".author").innerText;
+
+    return { text, author };
+  });
+});
+
+// Display the quotes
+console.log(quotes);
+
+// Click on the "Next page" button
+await page.click(".pager > .next > a");
+
+// Close the browser
+// await browser.close();
 };
 
 // Start the scraping
